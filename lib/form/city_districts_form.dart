@@ -15,7 +15,6 @@ class CityDistrictsForm extends StatelessWidget {
   Widget build(BuildContext context) {
     final CityDistrictsController citydistrictsGetX =
         Get.put(CityDistrictsController());
-    // Get.find<CityDistrictsController>();
 
     return Scaffold(
       appBar: AppBar(
@@ -34,7 +33,7 @@ class CityDistrictsForm extends StatelessWidget {
 
         //   Obx(() => Text(
         //       'Message: ${citydistrictsGetX.rxReqRes.value.message} Status: ${citydistrictsGetX.rxReqRes.value.status}')),
-        //   centerTitle: true,
+        centerTitle: true,
       ),
       drawer: const DrawerMenu(),
       body: Obx(() {

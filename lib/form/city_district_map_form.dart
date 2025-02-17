@@ -43,6 +43,15 @@ class _CityDistrictMapFormState extends State<CityDistrictMapForm> {
 
       // Добавляем полигон на карту
       setState(() {
+        // Добавляем маркер на карту
+        markers.add(
+          Marker(
+            markerId: MarkerId(widget.cityDistricts.id.toString()),
+            position: _centerPoint,
+            infoWindow: InfoWindow(title: widget.cityDistricts.name),
+          ),
+        );
+
         _polygons.add(
           Polygon(
             polygonId: PolygonId(widget.cityDistricts.name),
@@ -74,6 +83,7 @@ class _CityDistrictMapFormState extends State<CityDistrictMapForm> {
             zoom: 13.0,
           ),
           polygons: _polygons,
+          markers: markers,
         ),
       ),
     );
