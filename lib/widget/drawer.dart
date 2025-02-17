@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
+import 'package:prague_ru/localization/localization.dart';
 
 class DrawerMenu extends StatefulWidget {
   const DrawerMenu({Key? key}) : super(key: key);
@@ -14,14 +16,14 @@ class _DrawerMenuState extends State<DrawerMenu> {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          const DrawerHeader(
+          DrawerHeader(
             decoration: BoxDecoration(
-              color: Colors.blue,
+              color: Theme.of(context).primaryColor,
             ),
-            child: Text('Menu'),
+            child: Text(AppLocale.menu.getString(context)),
           ),
           ListTile(
-            title: const Text('Home'),
+            title: Text(AppLocale.praga_district.getString(context)),
             onTap: () {
               Navigator.pushNamed(context, '/');
             },
@@ -33,7 +35,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
           ),
 
           ListTile(
-            title: const Text('Setting'),
+            title: Text(AppLocale.setting.getString(context)),
             onTap: () {
               Navigator.pushNamed(context, '/SettingsPage');
             },
@@ -45,7 +47,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
           //
 
           ListTile(
-            title: const Text('Cancel'),
+            title: Text(AppLocale.cancel.getString(context)),
             onTap: () {
               Navigator.pop(context);
             },

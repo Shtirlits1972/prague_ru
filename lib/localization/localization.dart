@@ -9,6 +9,11 @@ mixin AppLocale {
   static const String setting = 'setting';
   static const String dark_theme = 'Dark Theme';
 
+  static const String praga_district = 'Prague districts';
+  static const String menu = 'Menu';
+  static const String cancel = 'Cancel';
+  static const String map = 'map';
+
   static const Map<String, dynamic> EN = en;
   static const Map<String, dynamic> RU = ru;
   static const Map<String, dynamic> CS = cs;

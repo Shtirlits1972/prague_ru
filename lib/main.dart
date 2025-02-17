@@ -74,6 +74,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return Obx(() {
       return MaterialApp(
+        debugShowCheckedModeBanner: false,
         supportedLocales: _localization.supportedLocales,
         localizationsDelegates: _localization.localizationsDelegates,
         onGenerateRoute: _appRouter.onGenerateRoute,

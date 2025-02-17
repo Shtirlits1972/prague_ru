@@ -4,6 +4,10 @@ const Map<String, dynamic> ru = {
   AppLocale.home: 'Домой',
   AppLocale.setting: 'Настройки',
   AppLocale.dark_theme: 'Темная тема',
+  AppLocale.praga_district: 'Районы Праги',
+  AppLocale.menu: 'Меню',
+  AppLocale.cancel: 'Отмена',
+  AppLocale.map: 'карта'
 };
 
 // const Map<String, String> ru = {
