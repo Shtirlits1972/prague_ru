@@ -14,9 +14,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // final prefs = await SharedPreferences.getInstance();
-  // Get.put(ThemeController(prefs));
-  // Get.put(LanguageController(prefs));
 
   await FlutterLocalization.instance.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();

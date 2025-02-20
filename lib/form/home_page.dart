@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:prague_ru/crud/geo.dart';
+import 'package:prague_ru/services/geo.dart';
 import 'package:prague_ru/dto_classes/geo_result.dart';
 import 'package:prague_ru/localization/localization.dart';
 import 'package:prague_ru/widget/drawer.dart';

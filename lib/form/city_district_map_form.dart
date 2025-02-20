@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geojson_vi/geojson_vi.dart';
-import 'package:prague_ru/crud/geo.dart';
+import 'package:prague_ru/services/geo.dart';
 import 'package:prague_ru/dto_classes/citydistricts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 

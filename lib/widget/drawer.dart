@@ -25,10 +25,22 @@ class _DrawerMenuState extends State<DrawerMenu> {
           ListTile(
             title: Text(AppLocale.praga_district.getString(context)),
             onTap: () {
-              Navigator.pushNamed(context, '/');
+              Navigator.pushNamed(context, '/CityDistrictsForm');
             },
           ),
 
+          const Divider(
+            color: Colors.grey,
+            thickness: 1,
+          ),
+
+          //MedicalForm
+          ListTile(
+            title: Text('MedicalForm'),
+            onTap: () {
+              Navigator.pushNamed(context, '/MedicalForm');
+            },
+          ),
           const Divider(
             color: Colors.grey,
             thickness: 1,
@@ -44,7 +56,6 @@ class _DrawerMenuState extends State<DrawerMenu> {
             color: Colors.grey,
             thickness: 1,
           ),
-          //
 
           ListTile(
             title: Text(AppLocale.cancel.getString(context)),

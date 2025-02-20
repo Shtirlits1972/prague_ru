@@ -28,9 +28,9 @@ dev_dependencies:
 flutter_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/images/praga.png"
+  image_path: "assets/images/praga5.png"
 
 flutter:
   uses-material-design: true
   assets:
-    - assets/images/praga.png
+    - assets/images/praga5.png
