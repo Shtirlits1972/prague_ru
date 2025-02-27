@@ -28,13 +28,16 @@ class _DistrictFilterFormState extends State<DistrictFilterForm> {
   CityDistrictsController citydistrictsGetX =
       Get.put(CityDistrictsController());
 
-  Set<CityDistricts> listDistricts = {}; //
+  Set<String?> setDistrictsSelectedSlug = {}; //
+  List<CityDistricts?> lstDistr = [];
 
   @override
   Widget build(BuildContext context) {
     // if (listDistricts.isEmpty) {
     //   listDistricts = citydistrictsGetX.rxReqRes.value.model!.toSet();
     // }
+    ReqRes<List<CityDistricts?>> rxList =
+        ReqRes<List<CityDistricts?>>(200, 'OK', lstDistr);
 
     return Scaffold(
       appBar: AppBar(
@@ -44,6 +47,7 @@ class _DistrictFilterFormState extends State<DistrictFilterForm> {
         automaticallyImplyLeading: false,
       ),
       body: Obx(() {
+        var dd = citydistrictsGetX.rxDistricts.value.model!.toSet();
         return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -53,9 +57,15 @@ class _DistrictFilterFormState extends State<DistrictFilterForm> {
                 flex: 10,
                 child: Center(
                   child:
-                      getCentral(citydistrictsGetX.rxDistricts.value, context),
+                      //=============//=========//=====//=============//===========//
+                      getCentral(
+                          rxList
+                          // citydistrictsGetX.rxDistricts.value
+                          ,
+                          context),
                 ),
               ),
+              //=============//=========//=====//=============//===========//
               Flexible(
                 child: Container(
                   decoration: BoxDecoration(
@@ -66,28 +76,25 @@ class _DistrictFilterFormState extends State<DistrictFilterForm> {
                   ),
                   child: SwitchListTile(
                     title: Text('All'),
-                    value: listDistricts.length ==
-                        citydistrictsGetX.rxDistricts.value.model!
-                            .toSet()
-                            .length,
+                    value: setDistrictsSelectedSlug.length == lstDistr.length,
                     onChanged: (value) {
                       if (value) {
                         print(value);
                         int h = 0;
                         setState(() {
-                          listDistricts = citydistrictsGetX
-                              .rxDistricts.value.model!
-                              .toSet();
+                          setDistrictsSelectedSlug =
+                              citydistrictsGetX.getDistrictSlug();
                         });
                       } else {
                         setState(() {
-                          listDistricts.clear();
+                          setDistrictsSelectedSlug.clear();
                         });
                       }
                     },
                   ),
                 ),
               ),
+              //=============//=========//=====//=============//===========//
               Flexible(
                 flex: 1,
                 child: Container(
@@ -115,13 +122,10 @@ class _DistrictFilterFormState extends State<DistrictFilterForm> {
                             onPressed: () {
                               setState(() {
 //==//==//==//=================================================
-                                print(listDistricts.length);
-                                ReqRes<List<CityDistricts>> newModel =
-                                    ReqRes<List<CityDistricts>>(
-                                        200, 'OK', listDistricts.toList());
+                                print(setDistrictsSelectedSlug.length);
 
-                                citydistrictsGetX
-                                    .setCityDistrictsSelected(newModel);
+                                citydistrictsGetX.setCityDistrictsSelected(
+                                    setDistrictsSelectedSlug);
                                 int h = 0;
                                 Navigator.pop(context);
 //==//==//==//=================================================
@@ -160,13 +164,21 @@ class _DistrictFilterFormState extends State<DistrictFilterForm> {
   void initState() {
     setState(() {
       print(citydistrictsGetX.rxDistricts.value.model!.toSet());
-      listDistricts = citydistrictsGetX.rxSelected.value.model!.toSet();
+
+      setDistrictsSelectedSlug.add(null);
+      setDistrictsSelectedSlug.addAll(citydistrictsGetX.rxSelected);
+
+      CityDistricts cityNull =
+          CityDistricts(id: 0, name: 'null', slug: null, geometry: null);
+
+      lstDistr.add(cityNull);
+      lstDistr.addAll(citydistrictsGetX.rxDistricts.value.model!);
       int g2 = 0;
     });
     super.initState();
   }
 
-  Widget getCentral(ReqRes<List<CityDistricts>> reqRes, BuildContext context) {
+  Widget getCentral(ReqRes<List<CityDistricts?>> reqRes, BuildContext context) {
     if (reqRes.model == null || reqRes.model!.isEmpty) {
       return Center(
         child: Column(
@@ -184,24 +196,31 @@ class _DistrictFilterFormState extends State<DistrictFilterForm> {
         ),
         itemCount: reqRes.model!.length,
         itemBuilder: (context, index) {
+          if (reqRes.model![index]!.slug == null) {
+            print(reqRes.model![index]!.slug);
+            int a = 0;
+          }
+
           return CheckboxListTile(
-            value: listDistricts.contains(reqRes.model![index]) ? true : false,
+            value: setDistrictsSelectedSlug.contains(reqRes.model![index]!.slug)
+                ? true
+                : false,
             onChanged: (bool? value) {
               print(value);
 
               if (value!) {
                 setState(() {
-                  listDistricts.add(reqRes.model![index]);
+                  setDistrictsSelectedSlug.add(reqRes.model![index]!.slug);
                 });
               } else {
                 setState(() {
-                  listDistricts.removeWhere(
-                      (item) => item.id == reqRes.model![index].id);
+                  setDistrictsSelectedSlug.removeWhere(
+                      (item) => item == reqRes.model![index]!.slug);
                 });
               }
-              print(reqRes.model![index].name);
+              print(reqRes.model![index]!.name);
             },
-            title: Text(reqRes.model![index].name),
+            title: Text(reqRes.model![index]!.name),
           );
         },
       );

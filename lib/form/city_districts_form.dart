@@ -44,7 +44,10 @@ class CityDistrictsForm extends StatelessWidget {
           CityDistrictsCrud.getData().then((value) {
             citydistrictsGetX.setCityDistricts(value);
 
-            citydistrictsGetX.setCityDistrictsSelected(value);
+            Set<String?> lstDistrict = {};
+            lstDistrict.add(null);
+            lstDistrict.addAll(citydistrictsGetX.getDistrictSlug());
+            citydistrictsGetX.setCityDistrictsSelected(lstDistrict);
           });
 
           return const Center(

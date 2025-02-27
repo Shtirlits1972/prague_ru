@@ -24,7 +24,7 @@ class MedicalForm extends StatefulWidget {
 
 class _MedicalFormState extends State<MedicalForm> {
   final MedicalController medicalGetX = Get.put(MedicalController());
-  final CityDistrictsController cityDistrictsController =
+  final CityDistrictsController cityDistrCtrl =
       Get.put(CityDistrictsController());
 
   int _currentPage = 0; // Переменная для хранения текущей страницы
@@ -57,12 +57,10 @@ class _MedicalFormState extends State<MedicalForm> {
               if (item == 0) {
                 Navigator.pushNamed(context, DistrictFilterForm.route)
                     .then((value) {
+                  int h = 0;
                   setState(() {
                     central = getCentral(
-                        medicalGetX
-                            .getFiltered(
-                                cityDistrictsController.getSelectDistrictSlug())
-                            .value,
+                        medicalGetX.getFiltered(cityDistrCtrl.rxSelected),
                         context);
                   });
                 });
@@ -116,11 +114,7 @@ class _MedicalFormState extends State<MedicalForm> {
                 color: Colors.blue,
               )
             : getCentral(
-                medicalGetX
-                    .getFiltered(
-                        cityDistrictsController.getSelectDistrictSlug())
-                    .value,
-                context);
+                medicalGetX.getFiltered(cityDistrCtrl.rxSelected), context);
 
         return Center(child: central);
       }),
@@ -146,7 +140,7 @@ class _MedicalFormState extends State<MedicalForm> {
 
   // -------------------  getCentral  ----------------------------
   Widget getCentral(
-      ReqRes<GeoJSONFeatureCollection> reqRes, BuildContext context) {
+      ReqRes<GeoJSONFeatureCollection?> reqRes, BuildContext context) {
     if (reqRes.model == null && reqRes.model!.features.isEmpty) {
       return Center(
         child: Column(
@@ -168,7 +162,7 @@ class _MedicalFormState extends State<MedicalForm> {
 
           String name = properties['name'];
           String adress = properties['address']['address_formatted'];
-          String district = properties['district'];
+          String? district = properties['district'];
 
           var phone_list = properties['telephone'] as List;
 

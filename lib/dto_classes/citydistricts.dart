@@ -6,14 +6,14 @@ class CityDistricts {
   String name;
   String? slug;
   String? updated_at;
-  GeoJSON geometry; // Теперь geometry не может быть null
+  GeoJSON? geometry; // Теперь geometry не может быть null
 
   CityDistricts({
     required this.id,
     required this.name,
     required this.slug,
     this.updated_at,
-    required this.geometry, // geometry теперь обязательное поле
+    this.geometry, // geometry теперь обязательное поле
   });
 
   factory CityDistricts.fromJson(Map<String, dynamic> json) {

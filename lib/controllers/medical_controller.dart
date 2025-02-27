@@ -23,37 +23,32 @@ class MedicalController extends GetxController {
     rxReqRes.value = newModel;
   }
 
-  Rx<ReqRes<GeoJSONFeatureCollection>> getFiltered(Set<String?> district) {
+  ReqRes<GeoJSONFeatureCollection?> getFiltered(Set<String?> district) {
     var features = rxReqRes.value.model!.features;
 
-    int h = 0;
-    // var filtered = features.where((feature) {
-    //   return feature!.properties!["type"]["description"] != null &&
-    //       ((rxReqResTypeSelected.value.model!.health_care
-    //               .contains(feature.properties!["type"]["description"])) ||
-    //           (rxReqResTypeSelected.value.model!.pharmacies
-    //               .contains(feature.properties!["type"]["description"])));
-    // }).toList();
-
-    // for (int i = 0; i < features.length; i++) {
-    //   if (!district
-    //       .contains(features[i]!.properties!['district'].toString().trim())) {
-    //     print(features[i]!.properties!['district'].toString().trim());
-    //     int h = 0;
-    //   }
-    // }
-
-    var filtered = features.where((feature) {
-      return feature!.properties!['district'] != null &&
-          (district
-              .contains(feature!.properties!['district'].toString().trim()));
+    List<GeoJSONFeature?> filtered = features.where((feature) {
+      int g3 = 0;
+      return district.contains(feature?.properties!['district']);
     }).toList();
 
-    Rx<ReqRes<GeoJSONFeatureCollection>> rx = rxReqRes;
+    List<GeoJSONFeature> f2 = [];
 
-    rx.value.model!.features = filtered;
+    filtered.forEach((feature) {
+      if (feature != null) {
+        f2.add(feature);
+      }
+    });
 
-    return rx;
+    GeoJSONFeatureCollection collect = GeoJSONFeatureCollection(f2);
+
+    ReqRes<GeoJSONFeatureCollection> newRx =
+        ReqRes<GeoJSONFeatureCollection>(200, 'OK', collect);
+
+    // Rx<ReqRes<GeoJSONFeatureCollection>> rx = ReqRes<GeoJSONFeatureCollection>.empty().obs;
+
+    // rx.value.model!.features = filtered;
+
+    return newRx;
   }
 
   void setMedicalType(ReqRes<MedicalType> newModel) {
