@@ -10,9 +10,14 @@ mixin AppLocale {
   static const String dark_theme = 'Dark Theme';
 
   static const String praga_district = 'Prague districts';
+  static const String medical_institurions = 'Medical Institutions';
+
   static const String menu = 'Menu';
   static const String cancel = 'Cancel';
   static const String map = 'map';
+
+  static const String districts = 'districts';
+  static const String medical_types = 'type medical Institutions';
 
   static const Map<String, dynamic> EN = en;
   static const Map<String, dynamic> RU = ru;

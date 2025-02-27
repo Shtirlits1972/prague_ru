@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:geojson_vi/geojson_vi.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:number_paginator/number_paginator.dart';
+import 'package:prague_ru/controllers/city_district_controller.dart';
 import 'package:prague_ru/controllers/medical_controller.dart';
 import 'package:prague_ru/dto_classes/req_res.dart';
+import 'package:prague_ru/form/district_filter_form.dart';
 import 'package:prague_ru/form/setting_form.dart';
+import 'package:prague_ru/localization/localization.dart';
 import 'package:prague_ru/services/medical_crud.dart';
+import 'package:prague_ru/services/medical_type_crud.dart';
 import 'package:prague_ru/widget/drawer.dart';
 
 class MedicalForm extends StatefulWidget {
@@ -18,6 +24,14 @@ class MedicalForm extends StatefulWidget {
 
 class _MedicalFormState extends State<MedicalForm> {
   final MedicalController medicalGetX = Get.put(MedicalController());
+  final CityDistrictsController cityDistrictsController =
+      Get.put(CityDistrictsController());
+
+  int _currentPage = 0; // Переменная для хранения текущей страницы
+  UniqueKey _paginatorKey = UniqueKey();
+  Widget central = Center(
+    child: Text('Ops...'),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +49,49 @@ class _MedicalFormState extends State<MedicalForm> {
             );
           },
         ),
-        title: Text('MedicalForm'),
+        title: Text(AppLocale.medical_institurions.getString(context)),
         centerTitle: true,
+        actions: <Widget>[
+          PopupMenuButton<int>(
+            onSelected: (item) {
+              if (item == 0) {
+                Navigator.pushNamed(context, DistrictFilterForm.route)
+                    .then((value) {
+                  setState(() {
+                    central = getCentral(
+                        medicalGetX
+                            .getFiltered(
+                                cityDistrictsController.getSelectDistrictSlug())
+                            .value,
+                        context);
+                  });
+                });
+              } else if (item == 1) {
+                // Navigator.pushNamed(context, '/MedicalTypeFilter');
+              }
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem<int>(
+                  value: 0,
+                  child: Row(
+                    children: [
+                      Icon(Icons.apartment, color: Colors.black),
+                      SizedBox(width: 5),
+                      Text(AppLocale.districts.getString(context)),
+                    ],
+                  )),
+              PopupMenuItem<int>(
+                  value: 1,
+                  child: Row(
+                    children: [
+                      Icon(Icons.medical_information, color: Colors.black),
+                      SizedBox(width: 5),
+                      Text(AppLocale.medical_types.getString(context)),
+                    ],
+                  )),
+            ],
+          ),
+        ],
       ),
       body: Obx(() {
         if (medicalGetX.rxReqRes.value.status == 0) {
@@ -47,14 +102,45 @@ class _MedicalFormState extends State<MedicalForm> {
             });
           });
         }
-        Widget central = medicalGetX.rxReqRes.value.status == 0
+        //==//===========//===============//=====================//==============
+        if (medicalGetX.rxReqResType.value.status == 0) {
+          MedicalTypeCrud.getData().then((value) {
+            medicalGetX.rxReqResType.value = value;
+            print('value: $value');
+            int y = 0;
+          });
+        }
+
+        central = medicalGetX.rxReqRes.value.status == 0
             ? CircularProgressIndicator(
                 color: Colors.blue,
               )
-            : getCentral(medicalGetX.rxReqRes.value, context);
+            : getCentral(
+                medicalGetX
+                    .getFiltered(
+                        cityDistrictsController.getSelectDistrictSlug())
+                    .value,
+                context);
 
         return Center(child: central);
       }),
+      bottomNavigationBar: Card(
+        margin: EdgeInsets.zero,
+        elevation: 4,
+        child: NumberPaginator(
+          key: _paginatorKey,
+          initialPage: _currentPage,
+          // by default, the paginator shows numbers as center content
+          numberPages: 10,
+          onPageChange: (int index) {
+            setState(() {
+              _currentPage = index; // Обновление текущей страницы
+
+              print('indes = $index');
+            });
+          },
+        ),
+      ),
     );
   }
 
@@ -99,6 +185,21 @@ class _MedicalFormState extends State<MedicalForm> {
 
             phoneCol = Column(
               children: listPhones,
+            );
+          }
+
+          Column typeColumn = Column();
+          List<Widget> listType = [];
+
+          if (properties['type'] != null) {
+            listType.add(Text('type'));
+            listType.add(ItemWidget(
+                title: 'description',
+                content: properties['type']['description']));
+            listType.add(ItemWidget(
+                title: 'group', content: properties['type']['group']));
+            typeColumn = Column(
+              children: listType,
             );
           }
 
@@ -150,10 +251,12 @@ class _MedicalFormState extends State<MedicalForm> {
                 ),
               ),
             ),
+            subtitle: Text(properties['address']['street_address']),
             children: [
               ItemWidget(title: 'adress', content: adress),
               phoneCol,
               ItemWidget(title: 'district', content: district),
+              typeColumn,
               colHours
             ],
           );

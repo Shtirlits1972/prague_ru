@@ -7,9 +7,14 @@ const Map<String, dynamic> cs = {
   AppLocale.praga_district: 'Pražské čtvrti',
   AppLocale.menu: 'Menu',
   AppLocale.cancel: 'Storno',
-  AppLocale.map: 'mapa'
+  AppLocale.map: 'mapa',
+  AppLocale.medical_institurions: 'Zdravotnická zařízení',
+  AppLocale.districts: 'čtvrti',
+  AppLocale.medical_types: 'typech zdravotnických zařízení'
 };
 
+
+//  
 // const Map<String, String> cs = {
 //   'home_title': 'Domů',
 //   'settings_title': 'Nastavení',

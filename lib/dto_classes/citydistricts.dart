@@ -4,7 +4,7 @@ import 'package:geojson_vi/geojson_vi.dart';
 class CityDistricts {
   int id;
   String name;
-  String slug;
+  String? slug;
   String? updated_at;
   GeoJSON geometry; // Теперь geometry не может быть null
 

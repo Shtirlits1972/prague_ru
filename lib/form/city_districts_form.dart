@@ -39,10 +39,12 @@ class CityDistrictsForm extends StatelessWidget {
       body: Obx(() {
         //   final reqRes = citydistrictsGetX.rxReqRes.value;
 
-        if (citydistrictsGetX.rxReqRes.value.status == 0) {
+        if (citydistrictsGetX.rxDistricts.value.status == 0) {
           // Загрузка данных при первом открытии формы
           CityDistrictsCrud.getData().then((value) {
             citydistrictsGetX.setCityDistricts(value);
+
+            citydistrictsGetX.setCityDistrictsSelected(value);
           });
 
           return const Center(
@@ -51,7 +53,7 @@ class CityDistrictsForm extends StatelessWidget {
             ),
           );
         } else {
-          return getCentral(citydistrictsGetX.rxReqRes.value, context);
+          return getCentral(citydistrictsGetX.rxDistricts.value, context);
         }
       }),
     );

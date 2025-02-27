@@ -3,6 +3,7 @@ import 'package:geojson_vi/geojson_vi.dart';
 import 'package:prague_ru/dto_classes/citydistricts.dart';
 import 'package:prague_ru/form/city_district_map_form.dart';
 import 'package:prague_ru/form/city_districts_form.dart';
+import 'package:prague_ru/form/district_filter_form.dart';
 import 'package:prague_ru/form/home_page.dart';
 import 'package:prague_ru/form/medical_form.dart';
 import 'package:prague_ru/form/medical_map_form.dart';
@@ -36,6 +37,11 @@ class AppRouter {
             routeSettings.arguments as GeoJSONFeature;
         return MaterialPageRoute(
           builder: (_) => MedicalMapForm(feature: feature),
+        );
+
+      case DistrictFilterForm.route:
+        return MaterialPageRoute(
+          builder: (context) => DistrictFilterForm(),
         );
 
       default:

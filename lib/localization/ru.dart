@@ -7,7 +7,10 @@ const Map<String, dynamic> ru = {
   AppLocale.praga_district: 'Районы Праги',
   AppLocale.menu: 'Меню',
   AppLocale.cancel: 'Отмена',
-  AppLocale.map: 'карта'
+  AppLocale.map: 'карта',
+  AppLocale.medical_institurions: 'медицинские учреждения',
+  AppLocale.districts: 'районы',
+  AppLocale.medical_types: 'типы мед.учереждений'
 };
 
 // const Map<String, String> ru = {

@@ -36,7 +36,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
 
           //MedicalForm
           ListTile(
-            title: Text('MedicalForm'),
+            title: Text(AppLocale.medical_institurions.getString(context)),
             onTap: () {
               Navigator.pushNamed(context, '/MedicalForm');
             },
