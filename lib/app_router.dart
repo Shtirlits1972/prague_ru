@@ -7,6 +7,7 @@ import 'package:prague_ru/form/district_filter_form.dart';
 import 'package:prague_ru/form/home_page.dart';
 import 'package:prague_ru/form/medical_form.dart';
 import 'package:prague_ru/form/medical_map_form.dart';
+import 'package:prague_ru/form/medical_type_form.dart';
 import 'package:prague_ru/form/setting_form.dart';
 
 class AppRouter {
@@ -42,6 +43,11 @@ class AppRouter {
       case DistrictFilterForm.route:
         return MaterialPageRoute(
           builder: (context) => DistrictFilterForm(),
+        );
+
+      case MedicalTypeForm.route:
+        return MaterialPageRoute(
+          builder: (context) => MedicalTypeForm(),
         );
 
       default:

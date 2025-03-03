@@ -33,9 +33,6 @@ class _DistrictFilterFormState extends State<DistrictFilterForm> {
 
   @override
   Widget build(BuildContext context) {
-    // if (listDistricts.isEmpty) {
-    //   listDistricts = citydistrictsGetX.rxReqRes.value.model!.toSet();
-    // }
     ReqRes<List<CityDistricts?>> rxList =
         ReqRes<List<CityDistricts?>>(200, 'OK', lstDistr);
 
@@ -82,8 +79,9 @@ class _DistrictFilterFormState extends State<DistrictFilterForm> {
                         print(value);
                         int h = 0;
                         setState(() {
-                          setDistrictsSelectedSlug =
-                              citydistrictsGetX.getDistrictSlug();
+                          setDistrictsSelectedSlug.add(null);
+                          setDistrictsSelectedSlug
+                              .addAll(citydistrictsGetX.getDistrictSlug());
                         });
                       } else {
                         setState(() {

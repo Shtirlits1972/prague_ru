@@ -10,20 +10,24 @@ class MedicalController extends GetxController {
       ReqRes<GeoJSONFeatureCollection>.empty().obs;
 
   // типы медучереждений
-  Rx<ReqRes<MedicalType>> rxReqResType = ReqRes<MedicalType>.empty().obs;
+  Rx<ReqRes<Set<String>>> rxMedicalType = ReqRes<Set<String>>.empty().obs;
 
-  Rx<ReqRes<MedicalType>> rxReqResTypeSelected =
-      ReqRes<MedicalType>.empty().obs;
+  var rxSelected = <String>{}.obs;
 
-  void setTypeSelected(ReqRes<MedicalType> models) {
-    rxReqResTypeSelected.value = models;
+  void setMedicalType(ReqRes<Set<String>> newModel) {
+    rxMedicalType.value = newModel;
+  }
+
+  void setMedicalTypeSelected(Set<String> models) {
+    rxSelected.value = models;
   }
 
   void setMedical(ReqRes<GeoJSONFeatureCollection> newModel) {
     rxReqRes.value = newModel;
   }
 
-  ReqRes<GeoJSONFeatureCollection?> getFiltered(Set<String?> district) {
+  ReqRes<GeoJSONFeatureCollection?> getFiltered(
+      Set<String?> district, Set<String> medicalType) {
     var features = rxReqRes.value.model!.features;
 
     List<GeoJSONFeature?> filtered = features.where((feature) {
@@ -31,9 +35,13 @@ class MedicalController extends GetxController {
       return district.contains(feature?.properties!['district']);
     }).toList();
 
+    List<GeoJSONFeature?> filtered2 = filtered.where((feature) {
+      return medicalType.contains(feature?.properties!['type']['description']);
+    }).toList();
+
     List<GeoJSONFeature> f2 = [];
 
-    filtered.forEach((feature) {
+    filtered2.forEach((feature) {
       if (feature != null) {
         f2.add(feature);
       }
@@ -44,14 +52,6 @@ class MedicalController extends GetxController {
     ReqRes<GeoJSONFeatureCollection> newRx =
         ReqRes<GeoJSONFeatureCollection>(200, 'OK', collect);
 
-    // Rx<ReqRes<GeoJSONFeatureCollection>> rx = ReqRes<GeoJSONFeatureCollection>.empty().obs;
-
-    // rx.value.model!.features = filtered;
-
     return newRx;
-  }
-
-  void setMedicalType(ReqRes<MedicalType> newModel) {
-    rxReqResType.value = newModel;
   }
 }

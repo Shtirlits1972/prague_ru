@@ -9,8 +9,9 @@ import 'dart:convert';
 import 'dart:async';
 
 class MedicalTypeCrud {
-  static Future<ReqRes<MedicalType>> getData() async {
-    ReqRes<MedicalType> result = ReqRes<MedicalType>.empty();
+  /*
+  static Future<ReqRes<Set<String>>> getData() async {
+    ReqRes<Set<String>> result = ReqRes<Set<String>>.empty();
 
     try {
       var headers = {
@@ -31,9 +32,19 @@ class MedicalTypeCrud {
       if (response.statusCode == 200) {
         MedicalType model = MedicalType.fromJson(json.decode(response.body));
 
+        Set<String> medTypes = {};
+
         print(model);
 
-        result.model = model;
+        model.health_care.forEach((val) {
+          medTypes.add(val);
+        });
+
+        model.pharmacies.forEach((val) {
+          medTypes.add(val);
+        });
+
+        result.model = medTypes;
         result.message = 'OK';
 
         if (result.model == null) {
@@ -56,4 +67,5 @@ class MedicalTypeCrud {
       return result;
     }
   }
+  */
 }

@@ -9,6 +9,7 @@ import 'package:prague_ru/controllers/city_district_controller.dart';
 import 'package:prague_ru/controllers/medical_controller.dart';
 import 'package:prague_ru/dto_classes/req_res.dart';
 import 'package:prague_ru/form/district_filter_form.dart';
+import 'package:prague_ru/form/medical_type_form.dart';
 import 'package:prague_ru/form/setting_form.dart';
 import 'package:prague_ru/localization/localization.dart';
 import 'package:prague_ru/services/medical_crud.dart';
@@ -23,18 +24,18 @@ class MedicalForm extends StatefulWidget {
 }
 
 class _MedicalFormState extends State<MedicalForm> {
-  final MedicalController medicalGetX = Get.put(MedicalController());
-  final CityDistrictsController cityDistrCtrl =
-      Get.put(CityDistrictsController());
-
-  int _currentPage = 0; // Переменная для хранения текущей страницы
-  UniqueKey _paginatorKey = UniqueKey();
-  Widget central = Center(
-    child: Text('Ops...'),
-  );
-
   @override
   Widget build(BuildContext context) {
+    final MedicalController medicalGetX = Get.put(MedicalController());
+    final CityDistrictsController cityDistrCtrl =
+        Get.put(CityDistrictsController());
+
+    int _currentPage = 0; // Переменная для хранения текущей страницы
+    UniqueKey _paginatorKey = UniqueKey();
+    Widget central = Center(
+      child: Text('Ops...'),
+    );
+
     return Scaffold(
       drawer: const DrawerMenu(),
       appBar: AppBar(
@@ -60,12 +61,13 @@ class _MedicalFormState extends State<MedicalForm> {
                   int h = 0;
                   setState(() {
                     central = getCentral(
-                        medicalGetX.getFiltered(cityDistrCtrl.rxSelected),
+                        medicalGetX.getFiltered(
+                            cityDistrCtrl.rxSelected, medicalGetX.rxSelected),
                         context);
                   });
                 });
               } else if (item == 1) {
-                // Navigator.pushNamed(context, '/MedicalTypeFilter');
+                Navigator.pushNamed(context, MedicalTypeForm.route);
               }
             },
             itemBuilder: (context) => [
@@ -101,11 +103,10 @@ class _MedicalFormState extends State<MedicalForm> {
           });
         }
         //==//===========//===============//=====================//==============
-        if (medicalGetX.rxReqResType.value.status == 0) {
-          MedicalTypeCrud.getData().then((value) {
-            medicalGetX.rxReqResType.value = value;
-            print('value: $value');
-            int y = 0;
+        if (medicalGetX.rxMedicalType.value.status == 0) {
+          MedicalCrud.getMedicalTypes().then((value) {
+            medicalGetX.setMedicalType(value);
+            medicalGetX.setMedicalTypeSelected(value.model!);
           });
         }
 
@@ -114,7 +115,9 @@ class _MedicalFormState extends State<MedicalForm> {
                 color: Colors.blue,
               )
             : getCentral(
-                medicalGetX.getFiltered(cityDistrCtrl.rxSelected), context);
+                medicalGetX.getFiltered(
+                    cityDistrCtrl.rxSelected, medicalGetX.rxSelected),
+                context);
 
         return Center(child: central);
       }),
