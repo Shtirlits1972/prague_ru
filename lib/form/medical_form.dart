@@ -24,17 +24,81 @@ class MedicalForm extends StatefulWidget {
 }
 
 class _MedicalFormState extends State<MedicalForm> {
+  final MedicalController medicalGetX = Get.put(MedicalController());
+  final CityDistrictsController cityDistrCtrl =
+      Get.put(CityDistrictsController());
+
+  ReqRes<GeoJSONFeatureCollection?> all =
+      ReqRes<GeoJSONFeatureCollection?>.empty();
+
+  ReqRes<GeoJSONFeatureCollection?> parts =
+      ReqRes<GeoJSONFeatureCollection?>.empty();
+
+  // @override
+  // void initState() {
+  //   super.initState();
+
+  //   all = medicalGetX.getFiltered(
+  //       cityDistrCtrl.rxSelected, medicalGetX.rxSelected);
+
+  // }
+
   @override
   Widget build(BuildContext context) {
-    final MedicalController medicalGetX = Get.put(MedicalController());
-    final CityDistrictsController cityDistrCtrl =
-        Get.put(CityDistrictsController());
-
     int _currentPage = 0; // Переменная для хранения текущей страницы
     UniqueKey _paginatorKey = UniqueKey();
     Widget central = Center(
       child: Text('Ops...'),
     );
+
+    // _currentPage = 4;
+
+    if ((cityDistrCtrl.rxSelected != null &&
+            cityDistrCtrl.rxSelected.isNotEmpty) &&
+        (medicalGetX.rxSelected != null && medicalGetX.rxSelected.isNotEmpty)) {
+      try {
+        all = medicalGetX.getFiltered(
+            cityDistrCtrl.rxSelected, medicalGetX.rxSelected);
+      } catch (e) {
+        print(e);
+        var rr = 0;
+      }
+
+      print(all);
+
+      var start = 0;
+      var end = 0;
+
+      if (all.model!.features.length >= _currentPage * MedicalCrud.page_size) {
+        start = _currentPage * MedicalCrud.page_size;
+      }
+
+      if (all.model!.features.length >=
+          _currentPage * MedicalCrud.page_size + MedicalCrud.page_size) {
+        end = _currentPage * MedicalCrud.page_size + MedicalCrud.page_size;
+      } else {
+        end = all.model!.features.length;
+      }
+
+      List<GeoJSONFeature?> collect = all.model!.features.sublist(start, end);
+
+      List<GeoJSONFeature> collect2 = [];
+
+      collect.forEach((val) {
+        if (val != null) {
+          collect2.add(val);
+        }
+      });
+
+      GeoJSONFeatureCollection geo = GeoJSONFeatureCollection(collect2);
+      print(geo);
+      var r1 = 0;
+      parts = ReqRes<GeoJSONFeatureCollection?>(all.status, all.message, geo);
+
+      print(parts);
+
+      var r = 0;
+    }
 
     return Scaffold(
       drawer: const DrawerMenu(),
@@ -67,7 +131,16 @@ class _MedicalFormState extends State<MedicalForm> {
                   });
                 });
               } else if (item == 1) {
-                Navigator.pushNamed(context, MedicalTypeForm.route);
+                Navigator.pushNamed(context, MedicalTypeForm.route)
+                    .then((value) {
+                  int h = 0;
+                  setState(() {
+                    central = getCentral(
+                        medicalGetX.getFiltered(
+                            cityDistrCtrl.rxSelected, medicalGetX.rxSelected),
+                        context);
+                  });
+                });
               }
             },
             itemBuilder: (context) => [
@@ -121,23 +194,27 @@ class _MedicalFormState extends State<MedicalForm> {
 
         return Center(child: central);
       }),
-      bottomNavigationBar: Card(
-        margin: EdgeInsets.zero,
-        elevation: 4,
-        child: NumberPaginator(
-          key: _paginatorKey,
-          initialPage: _currentPage,
-          // by default, the paginator shows numbers as center content
-          numberPages: 10,
-          onPageChange: (int index) {
-            setState(() {
-              _currentPage = index; // Обновление текущей страницы
+      //===================   paginator   ======================
+      // bottomNavigationBar: Card(
+      //   margin: EdgeInsets.zero,
+      //   elevation: 4,
+      //   child: NumberPaginator(
+      //     key: _paginatorKey,
+      //     initialPage: _currentPage,
+      //     // by default, the paginator shows numbers as center content
+      //     numberPages: (parts.model != null && parts.model!.features.isNotEmpty)
+      //         ? (parts.model!.features.length / MedicalCrud.page_size).round()
+      //         : 1,
+      //     onPageChange: (int index) {
+      //       setState(() {
+      //         _currentPage = index; // Обновление текущей страницы
 
-              print('indes = $index');
-            });
-          },
-        ),
-      ),
+      //         print('indes = $index');
+      //       });
+      //     },
+      //   ),
+      // ),
+      //===================   paginator   ======================
     );
   }
 
@@ -184,21 +261,7 @@ class _MedicalFormState extends State<MedicalForm> {
               children: listPhones,
             );
           }
-
-          Column typeColumn = Column();
-          List<Widget> listType = [];
-
-          if (properties['type'] != null) {
-            listType.add(Text('type'));
-            listType.add(ItemWidget(
-                title: 'description',
-                content: properties['type']['description']));
-            listType.add(ItemWidget(
-                title: 'group', content: properties['type']['group']));
-            typeColumn = Column(
-              children: listType,
-            );
-          }
+          String type = properties['type']['description'];
 
           var opening_hours = properties['opening_hours'] as List;
 
@@ -253,7 +316,7 @@ class _MedicalFormState extends State<MedicalForm> {
               ItemWidget(title: 'adress', content: adress),
               phoneCol,
               ItemWidget(title: 'district', content: district),
-              typeColumn,
+              ItemWidget(title: 'type', content: type),
               colHours
             ],
           );

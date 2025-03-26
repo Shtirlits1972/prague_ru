@@ -1,4 +1,6 @@
 final host = 'api.golemio.cz';
 
+final translate_key = 'AIzaSyC9AQHURDIjzlYRwG3jJALrpE3q2b5knmk';
+
 final x_token =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzMyNSwiaWF0IjoxNzM5MjM5Njg0LCJleHAiOjExNzM5MjM5Njg0LCJpc3MiOiJnb2xlbWlvIiwianRpIjoiNWFjMzI3ZTgtMjBkZi00NDFhLTk2MTAtZWRhYjYzZTlhZGFkIn0.PLpI1S7exHEjjF7TSrSzrKNcCgPICd6rB1NqwFJrei4';

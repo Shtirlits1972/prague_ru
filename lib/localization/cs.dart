@@ -1,6 +1,7 @@
 import 'package:prague_ru/localization/localization.dart';
 
 const Map<String, dynamic> cs = {
+  AppLocale.lang: 'cs',
   AppLocale.home: 'Domů',
   AppLocale.setting: 'Nastavení',
   AppLocale.dark_theme: 'Tmavý režim',
@@ -10,7 +11,9 @@ const Map<String, dynamic> cs = {
   AppLocale.map: 'mapa',
   AppLocale.medical_institurions: 'Zdravotnická zařízení',
   AppLocale.districts: 'čtvrti',
-  AppLocale.medical_types: 'typech zdravotnických zařízení'
+  AppLocale.medical_types: 'typech zdravotnických zařízení',
+  AppLocale.all: 'všechny',
+  AppLocale.police_stations: 'Policejní stanice'
 };
 
 

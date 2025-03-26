@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
+import 'package:prague_ru/form/police_form.dart';
 import 'package:prague_ru/localization/localization.dart';
 
 class DrawerMenu extends StatefulWidget {
@@ -39,6 +40,18 @@ class _DrawerMenuState extends State<DrawerMenu> {
             title: Text(AppLocale.medical_institurions.getString(context)),
             onTap: () {
               Navigator.pushNamed(context, '/MedicalForm');
+            },
+          ),
+          const Divider(
+            color: Colors.grey,
+            thickness: 1,
+          ),
+
+          //  PoliceForm
+          ListTile(
+            title: Text(AppLocale.police_stations.getString(context)),
+            onTap: () {
+              Navigator.pushNamed(context, PoliceForm.route);
             },
           ),
           const Divider(

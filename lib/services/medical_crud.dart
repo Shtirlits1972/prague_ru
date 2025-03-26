@@ -9,7 +9,7 @@ import 'dart:convert';
 import 'dart:async';
 
 class MedicalCrud {
-  final page_size = 100;
+  static const page_size = 100;
 
   static Future<ReqRes<GeoJSONFeatureCollection>> getData() async {
     ReqRes<GeoJSONFeatureCollection> result =

@@ -72,7 +72,7 @@ class _DistrictFilterFormState extends State<DistrictFilterForm> {
                     ),
                   ),
                   child: SwitchListTile(
-                    title: Text('All'),
+                    title: Text(AppLocale.all.getString(context)),
                     value: setDistrictsSelectedSlug.length == lstDistr.length,
                     onChanged: (value) {
                       if (value) {

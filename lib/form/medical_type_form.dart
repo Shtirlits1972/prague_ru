@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
 import 'package:prague_ru/controllers/medical_controller.dart';
 import 'package:prague_ru/dto_classes/medical_type.dart';
 import 'package:prague_ru/dto_classes/req_res.dart';
 import 'package:prague_ru/services/medical_crud.dart';
+import 'package:prague_ru/localization/localization.dart';
+import 'package:prague_ru/widget/translation_widget.dart';
 
 class MedicalTypeForm extends StatefulWidget {
   MedicalTypeForm({Key? key}) : super(key: key);
@@ -31,7 +34,7 @@ class _MedicalTypeFormState extends State<MedicalTypeForm> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
-        title: Text('Medical Type'),
+        title: Text(AppLocale.medical_types.getString(context)),
         centerTitle: true,
         automaticallyImplyLeading: false,
       ),
@@ -53,7 +56,7 @@ class _MedicalTypeFormState extends State<MedicalTypeForm> {
                 ),
               ),
               child: SwitchListTile(
-                title: Text('All'),
+                title: Text(AppLocale.all.getString(context)),
                 value: medTypeSelected.length == medTypeAll.model!.length,
                 onChanged: (value) {
                   if (value) {
@@ -139,6 +142,7 @@ class _MedicalTypeFormState extends State<MedicalTypeForm> {
 
 //  =================   GetCentral   =================================================
   Widget getCentral(ReqRes<Set<String>> reqRes, BuildContext context) {
+    String lang = AppLocale.lang.getString(context);
     print(reqRes);
     var r = 0;
 
@@ -177,7 +181,12 @@ class _MedicalTypeFormState extends State<MedicalTypeForm> {
                 });
               }
             },
-            title: Text(reqRes.model!.toList()[index]),
+            title: TranslationWidget(
+                text: reqRes.model!.toList()[index],
+                lang: AppLocale.lang.getString(context)),
+            //  Text(reqRes.model!.toList()[index]),
+            //  AppLocale.medical_types.getString(context)
+            //  translator.translate(originalJson[key]!, to: 'ru')
           );
         },
       );

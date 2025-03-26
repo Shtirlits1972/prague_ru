@@ -5,6 +5,8 @@ import 'ru.dart';
 import 'cs.dart';
 
 mixin AppLocale {
+  static const String lang = 'en';
+
   static const String home = 'home';
   static const String setting = 'setting';
   static const String dark_theme = 'Dark Theme';
@@ -18,6 +20,8 @@ mixin AppLocale {
 
   static const String districts = 'districts';
   static const String medical_types = 'type medical Institutions';
+  static const String all = 'all';
+  static const String police_stations = 'Police stations';
 
   static const Map<String, dynamic> EN = en;
   static const Map<String, dynamic> RU = ru;
