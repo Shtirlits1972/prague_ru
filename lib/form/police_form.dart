@@ -1,7 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:geojson_vi/geojson_vi.dart';
 import 'package:get/get.dart';
+import 'package:number_paginator/number_paginator.dart';
+import 'package:prague_ru/controllers/city_district_controller.dart';
 import 'package:prague_ru/controllers/police_controller.dart';
 import 'package:prague_ru/dto_classes/req_res.dart';
 import 'package:prague_ru/form/police_map.dart';
@@ -9,6 +13,7 @@ import 'package:prague_ru/form/setting_form.dart';
 import 'package:prague_ru/localization/localization.dart';
 import 'package:prague_ru/services/police_crud.dart';
 import 'package:prague_ru/widget/drawer.dart';
+import 'package:prague_ru/form/district_filter_form.dart';
 
 class PoliceForm extends StatefulWidget {
   const PoliceForm({Key? key}) : super(key: key);
@@ -43,6 +48,24 @@ class _PoliceFormState extends State<PoliceForm> {
         ),
         title: Text(AppLocale.police_stations.getString(context)),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.filter_alt),
+            onPressed: () async {
+              final result = await Navigator.pushNamed(
+                context,
+                DistrictFilterForm.route,
+              );
+              if (result != null) {
+                // Сбрасываем пагинацию и обновляем данные
+                policeGetX.resetPagination();
+                policeGetX.rxReqRes.value =
+                    ReqRes<GeoJSONFeatureCollection>.empty();
+                setState(() {});
+              }
+            },
+          ),
+        ],
       ),
       body: Obx(() {
         if (policeGetX.rxReqRes.value.status == 0) {
@@ -74,54 +97,68 @@ class _PoliceFormState extends State<PoliceForm> {
   // -------------------  getCentral  ----------------------------
   Widget getCentral(
       ReqRes<GeoJSONFeatureCollection?> reqRes, BuildContext context) {
-    if (reqRes.model == null && reqRes.model!.features.isEmpty) {
+    final policeController = Get.find<PoliceController>();
+    final cityDistrictsController = Get.find<CityDistrictsController>();
+
+    if (reqRes.model == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    final filteredData =
+        policeController.filterByDistricts(cityDistrictsController.rxSelected);
+
+    // Если после фильтрации данных нет
+    if (filteredData.features.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('No Data'),
-            Text(reqRes.message),
+            Text(AppLocale.no_data.getString(context)),
+            if (cityDistrictsController.rxSelected.isNotEmpty)
+              Text(AppLocale.try_change_filters.getString(context)),
           ],
         ),
       );
-    } else {
-      return ListView.separated(
-        separatorBuilder: (context, index) => const Divider(
-          thickness: 1,
-        ),
-        itemCount: reqRes.model!.features.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            leading: Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: CircleAvatar(
-                radius: 20,
-                backgroundColor: Theme.of(context).primaryColor,
-                child: Text(
-                  '${index + 1}',
-                ),
-              ),
-            ),
-            dense: true,
-            title: InkWell(
-              onTap: () {
-                Navigator.pushNamed(context, PoliceMap.route,
-                    arguments: reqRes.model!.features[index]!);
-                print(reqRes.model!.features[index]!.properties!);
-              },
-              child: Text(
-                reqRes.model!.features[index]!.properties!['address']
-                    ['street_address'],
-                style: const TextStyle(
-                  fontSize: 20,
-                ),
-              ),
-            ),
-            subtitle:
-                Text(reqRes.model!.features[index]!.properties!['district']),
-          );
-        },
-      );
     }
+
+    final paginatedData = policeController.getPaginatedData(filteredData);
+    final totalPages = max(1,
+        (filteredData.features.length / policeController.itemsPerPage).ceil());
+
+    return Column(
+      children: [
+        Expanded(
+          child: ListView.separated(
+            itemCount: paginatedData.length,
+            separatorBuilder: (context, index) => const Divider(thickness: 1),
+            itemBuilder: (context, index) {
+              final item = paginatedData[index]!;
+              return ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  child: Text(
+                      '${index + 1 + (policeController.currentPage.value * policeController.itemsPerPage)}'),
+                ),
+                title: Text(item.properties!['address']['street_address']),
+                subtitle: Text(item.properties!['district']),
+                onTap: () => Navigator.pushNamed(
+                  context,
+                  PoliceMap.route,
+                  arguments: item,
+                ),
+              );
+            },
+          ),
+        ),
+        if (totalPages > 1)
+          NumberPaginator(
+            numberPages: totalPages,
+            initialPage: policeController.currentPage.value,
+            onPageChange: (int page) {
+              policeController.changePage(page);
+            },
+          ),
+      ],
+    );
   }
 }

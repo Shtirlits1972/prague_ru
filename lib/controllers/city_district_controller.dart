@@ -6,12 +6,12 @@ class CityDistrictsController extends GetxController {
   // Явно указываем тип ReqRes<List<CityDistricts>>
   var rxDistricts = ReqRes<List<CityDistricts>>.empty().obs;
 
-  // Rx<Set<String?>> rxSelected  = <Set<String?>>{}.obs;
-  var rxSelected = <String?>{}.obs;
-
   void setCityDistricts(ReqRes<List<CityDistricts>> newModel) {
     rxDistricts.value = newModel;
   }
+
+  // Rx<Set<String?>> rxSelected  = <Set<String?>>{}.obs;
+  var rxSelected = <String?>{}.obs;
 
   void setCityDistrictsSelected(Set<String?> newModel) {
     rxSelected.value = newModel;

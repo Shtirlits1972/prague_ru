@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
 import 'package:prague_ru/app_router.dart';
+import 'package:prague_ru/controllers/city_district_controller.dart';
 import 'package:prague_ru/controllers/language_controller.dart';
+import 'package:prague_ru/controllers/medical_controller.dart';
 import 'package:prague_ru/form/home_page.dart';
 import 'package:prague_ru/form/setting_form.dart';
 import 'package:prague_ru/localization/localization.dart';
@@ -35,6 +37,9 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
+    Get.put(MedicalController());
+    Get.put(CityDistrictsController());
+
     _localization.init(
       mapLocales: [
         const MapLocale(

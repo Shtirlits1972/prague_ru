@@ -13,8 +13,13 @@ const Map<String, dynamic> cs = {
   AppLocale.districts: 'čtvrti',
   AppLocale.medical_types: 'typech zdravotnických zařízení',
   AppLocale.all: 'všechny',
-  AppLocale.police_stations: 'Policejní stanice'
+  AppLocale.police_stations: 'Policejní stanice',
+  AppLocale.no_data: 'žádné údaje',
+  AppLocale.try_change_filters: 'zkuste vyměnit filtry'
 };
+
+  
+
 
 
 //  

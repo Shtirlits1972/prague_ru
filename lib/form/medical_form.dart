@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:geojson_vi/geojson_vi.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:number_paginator/number_paginator.dart';
 import 'package:prague_ru/controllers/city_district_controller.dart';
 import 'package:prague_ru/controllers/medical_controller.dart';
@@ -13,8 +11,8 @@ import 'package:prague_ru/form/medical_type_form.dart';
 import 'package:prague_ru/form/setting_form.dart';
 import 'package:prague_ru/localization/localization.dart';
 import 'package:prague_ru/services/medical_crud.dart';
-import 'package:prague_ru/services/medical_type_crud.dart';
 import 'package:prague_ru/widget/drawer.dart';
+import 'package:prague_ru/widget/item_widget.dart';
 
 class MedicalForm extends StatefulWidget {
   const MedicalForm({Key? key}) : super(key: key);
@@ -24,304 +22,266 @@ class MedicalForm extends StatefulWidget {
 }
 
 class _MedicalFormState extends State<MedicalForm> {
-  final MedicalController medicalGetX = Get.put(MedicalController());
-  final CityDistrictsController cityDistrCtrl =
+  final MedicalController medicalController = Get.put(MedicalController());
+  final CityDistrictsController cityDistrictsController =
       Get.put(CityDistrictsController());
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  ReqRes<GeoJSONFeatureCollection?> all =
-      ReqRes<GeoJSONFeatureCollection?>.empty();
+  int _currentPage = 0;
+  late UniqueKey _paginatorKey;
+  bool _isLoading = true;
 
-  ReqRes<GeoJSONFeatureCollection?> parts =
-      ReqRes<GeoJSONFeatureCollection?>.empty();
+  @override
+  void initState() {
+    super.initState();
+    _paginatorKey = UniqueKey();
+    _loadInitialData();
+  }
 
-  // @override
-  // void initState() {
-  //   super.initState();
-
-  //   all = medicalGetX.getFiltered(
-  //       cityDistrCtrl.rxSelected, medicalGetX.rxSelected);
-
-  // }
+  Future<void> _loadInitialData() async {
+    if (medicalController.rxReqRes.value.status == 0) {
+      await medicalController.loadMedicalData();
+    }
+    if (medicalController.rxMedicalType.value.status == 0) {
+      await medicalController.loadMedicalTypes();
+    }
+    setState(() => _isLoading = false);
+  }
 
   @override
   Widget build(BuildContext context) {
-    int _currentPage = 0; // Переменная для хранения текущей страницы
-    UniqueKey _paginatorKey = UniqueKey();
-    Widget central = Center(
-      child: Text('Ops...'),
-    );
-
-    // _currentPage = 4;
-
-    if ((cityDistrCtrl.rxSelected != null &&
-            cityDistrCtrl.rxSelected.isNotEmpty) &&
-        (medicalGetX.rxSelected != null && medicalGetX.rxSelected.isNotEmpty)) {
-      try {
-        all = medicalGetX.getFiltered(
-            cityDistrCtrl.rxSelected, medicalGetX.rxSelected);
-      } catch (e) {
-        print(e);
-        var rr = 0;
-      }
-
-      print(all);
-
-      var start = 0;
-      var end = 0;
-
-      if (all.model!.features.length >= _currentPage * MedicalCrud.page_size) {
-        start = _currentPage * MedicalCrud.page_size;
-      }
-
-      if (all.model!.features.length >=
-          _currentPage * MedicalCrud.page_size + MedicalCrud.page_size) {
-        end = _currentPage * MedicalCrud.page_size + MedicalCrud.page_size;
-      } else {
-        end = all.model!.features.length;
-      }
-
-      List<GeoJSONFeature?> collect = all.model!.features.sublist(start, end);
-
-      List<GeoJSONFeature> collect2 = [];
-
-      collect.forEach((val) {
-        if (val != null) {
-          collect2.add(val);
-        }
-      });
-
-      GeoJSONFeatureCollection geo = GeoJSONFeatureCollection(collect2);
-      print(geo);
-      var r1 = 0;
-      parts = ReqRes<GeoJSONFeatureCollection?>(all.status, all.message, geo);
-
-      print(parts);
-
-      var r = 0;
-    }
-
     return Scaffold(
+      key: _scaffoldKey, // Добавляем ключ к Scaffold
       drawer: const DrawerMenu(),
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColor,
-        leading: Builder(
-          builder: (context) {
-            return IconButton(
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-              icon: const Icon(Icons.menu_rounded),
-            );
-          },
-        ),
-        title: Text(AppLocale.medical_institurions.getString(context)),
-        centerTitle: true,
-        actions: <Widget>[
-          PopupMenuButton<int>(
-            onSelected: (item) {
-              if (item == 0) {
-                Navigator.pushNamed(context, DistrictFilterForm.route)
-                    .then((value) {
-                  int h = 0;
-                  setState(() {
-                    central = getCentral(
-                        medicalGetX.getFiltered(
-                            cityDistrCtrl.rxSelected, medicalGetX.rxSelected),
-                        context);
-                  });
-                });
-              } else if (item == 1) {
-                Navigator.pushNamed(context, MedicalTypeForm.route)
-                    .then((value) {
-                  int h = 0;
-                  setState(() {
-                    central = getCentral(
-                        medicalGetX.getFiltered(
-                            cityDistrCtrl.rxSelected, medicalGetX.rxSelected),
-                        context);
-                  });
-                });
-              }
-            },
-            itemBuilder: (context) => [
-              PopupMenuItem<int>(
-                  value: 0,
-                  child: Row(
-                    children: [
-                      Icon(Icons.apartment, color: Colors.black),
-                      SizedBox(width: 5),
-                      Text(AppLocale.districts.getString(context)),
-                    ],
-                  )),
-              PopupMenuItem<int>(
-                  value: 1,
-                  child: Row(
-                    children: [
-                      Icon(Icons.medical_information, color: Colors.black),
-                      SizedBox(width: 5),
-                      Text(AppLocale.medical_types.getString(context)),
-                    ],
-                  )),
-            ],
-          ),
-        ],
-      ),
-      body: Obx(() {
-        if (medicalGetX.rxReqRes.value.status == 0) {
-          print('hello');
-          MedicalCrud.getData().then((value) {
-            setState(() {
-              medicalGetX.rxReqRes.value = value;
-            });
-          });
-        }
-        //==//===========//===============//=====================//==============
-        if (medicalGetX.rxMedicalType.value.status == 0) {
-          MedicalCrud.getMedicalTypes().then((value) {
-            medicalGetX.setMedicalType(value);
-            medicalGetX.setMedicalTypeSelected(value.model!);
-          });
-        }
-
-        central = medicalGetX.rxReqRes.value.status == 0
-            ? CircularProgressIndicator(
-                color: Colors.blue,
-              )
-            : getCentral(
-                medicalGetX.getFiltered(
-                    cityDistrCtrl.rxSelected, medicalGetX.rxSelected),
-                context);
-
-        return Center(child: central);
-      }),
-      //===================   paginator   ======================
-      // bottomNavigationBar: Card(
-      //   margin: EdgeInsets.zero,
-      //   elevation: 4,
-      //   child: NumberPaginator(
-      //     key: _paginatorKey,
-      //     initialPage: _currentPage,
-      //     // by default, the paginator shows numbers as center content
-      //     numberPages: (parts.model != null && parts.model!.features.isNotEmpty)
-      //         ? (parts.model!.features.length / MedicalCrud.page_size).round()
-      //         : 1,
-      //     onPageChange: (int index) {
-      //       setState(() {
-      //         _currentPage = index; // Обновление текущей страницы
-
-      //         print('indes = $index');
-      //       });
-      //     },
-      //   ),
-      // ),
-      //===================   paginator   ======================
+      appBar: _buildAppBar(context),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Obx(() => _buildBody(context)),
+      bottomNavigationBar: _buildPaginator(),
     );
   }
 
-  // -------------------  getCentral  ----------------------------
-  Widget getCentral(
-      ReqRes<GeoJSONFeatureCollection?> reqRes, BuildContext context) {
-    if (reqRes.model == null && reqRes.model!.features.isEmpty) {
+  AppBar _buildAppBar(BuildContext context) {
+    return AppBar(
+      backgroundColor: Theme.of(context).primaryColor,
+      leading: IconButton(
+        onPressed: () => _scaffoldKey.currentState!.openDrawer(),
+        icon: const Icon(Icons.menu_rounded),
+      ),
+      title: Text(AppLocale.medical_institurions.getString(context)),
+      centerTitle: true,
+      actions: [_buildFilterMenu()],
+    );
+  }
+
+  Widget _buildFilterMenu() {
+    return PopupMenuButton<int>(
+      onSelected: (item) async {
+        if (item == 0) {
+          await Navigator.pushNamed(
+              _scaffoldKey.currentContext!, DistrictFilterForm.route);
+        } else if (item == 1) {
+          await Navigator.pushNamed(
+              _scaffoldKey.currentContext!, MedicalTypeForm.route);
+        }
+        _resetPaginator();
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem<int>(
+          value: 0,
+          child: Row(
+            children: [
+              const Icon(Icons.apartment, color: Colors.black),
+              const SizedBox(width: 5),
+              Text(AppLocale.districts.getString(context)),
+            ],
+          ),
+        ),
+        PopupMenuItem<int>(
+          value: 1,
+          child: Row(
+            children: [
+              const Icon(Icons.medical_information, color: Colors.black),
+              const SizedBox(width: 5),
+              Text(AppLocale.medical_types.getString(context)),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBody(BuildContext context) {
+    final filteredData = medicalController.getFiltered(
+      cityDistrictsController.rxSelected,
+      medicalController.rxSelected,
+    );
+
+    if (filteredData.model == null || filteredData.model!.features.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text('No Data'),
-            Text(reqRes.message),
+            Text(filteredData.message),
           ],
         ),
       );
-    } else {
-      return ListView.separated(
-        separatorBuilder: (context, index) => const Divider(
-          thickness: 1,
-        ),
-        itemCount: reqRes.model!.features.length,
-        itemBuilder: (context, index) {
-          var properties = reqRes.model!.features[index]!.properties!;
-
-          String name = properties['name'];
-          String adress = properties['address']['address_formatted'];
-          String? district = properties['district'];
-
-          var phone_list = properties['telephone'] as List;
-
-          List<ItemWidget> listPhones = [];
-
-          Column phoneCol = Column();
-
-          if (phone_list.isNotEmpty) {
-            String phoneValue = '';
-            for (int i = 0; i < phone_list.length; i++) {
-              phoneValue += phone_list[i].toString() + '\n';
-            }
-            listPhones.add(ItemWidget(title: 'telephone', content: phoneValue));
-
-            phoneCol = Column(
-              children: listPhones,
-            );
-          }
-          String type = properties['type']['description'];
-
-          var opening_hours = properties['opening_hours'] as List;
-
-          List<Widget> listHours = [];
-
-          if (opening_hours.isNotEmpty) {
-            listHours.add(Text('opening hours'));
-
-            opening_hours.forEach(
-              (element) {
-                listHours.add(ItemWidget(
-                    title: element['day_of_week'].toString(),
-                    content:
-                        '${element['opens'].toString()} - ${element['closes'].toString()}'));
-              },
-            );
-          }
-
-          Column colHours = Column(
-            children: listHours,
-          );
-
-          return ExpansionTile(
-            controlAffinity: ListTileControlAffinity.trailing,
-            childrenPadding: EdgeInsets.all(16),
-            leading: Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: CircleAvatar(
-                radius: 20,
-                backgroundColor: Theme.of(context).primaryColor,
-                child: Text(
-                  '${index + 1}',
-                ),
-              ),
-            ),
-            dense: true,
-            title: InkWell(
-              onTap: () {
-                Navigator.pushNamed(context, '/MedicalMapForm',
-                    arguments: reqRes.model!.features[index]!);
-                // print(reqRes.model!.features[index]!.properties!);
-              },
-              child: Text(
-                name,
-                style: const TextStyle(
-                  fontSize: 20,
-                ),
-              ),
-            ),
-            subtitle: Text(properties['address']['street_address']),
-            children: [
-              ItemWidget(title: 'adress', content: adress),
-              phoneCol,
-              ItemWidget(title: 'district', content: district),
-              ItemWidget(title: 'type', content: type),
-              colHours
-            ],
-          );
-        },
-      );
     }
+
+    final paginatedFeatures = _getPaginatedFeatures(filteredData.model!);
+    return _buildMedicalList(context, paginatedFeatures);
+  }
+
+  Widget _buildMedicalList(
+      BuildContext context, List<GeoJSONFeature> features) {
+    return ListView.separated(
+      separatorBuilder: (context, index) => const Divider(thickness: 1),
+      itemCount: features.length,
+      itemBuilder: (context, index) {
+        final feature = features[index];
+        return _buildMedicalItem(context, feature, index);
+      },
+    );
+  }
+
+  Widget _buildMedicalItem(
+      BuildContext context, GeoJSONFeature feature, int index) {
+    final properties = feature.properties!;
+    final name = properties['name'];
+    final address = properties['address']['address_formatted'];
+    final district = properties['district'];
+    final type = properties['type']['description'];
+    final phoneList = properties['telephone'] as List;
+    final openingHours = properties['opening_hours'] as List;
+
+    return ExpansionTile(
+      controlAffinity: ListTileControlAffinity.trailing,
+      childrenPadding: const EdgeInsets.all(16),
+      leading: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: CircleAvatar(
+          radius: 20,
+          backgroundColor: Theme.of(context).primaryColor,
+          child: Text('${index + 1}'),
+        ),
+      ),
+      title: InkWell(
+        onTap: () => _navigateToMedicalMap(feature),
+        child: Text(
+          name,
+          style: const TextStyle(fontSize: 20),
+        ),
+      ),
+      subtitle: Text(properties['address']['street_address']),
+      children: [
+        ItemWidget(title: 'address', content: address),
+        _buildPhoneColumn(phoneList),
+        ItemWidget(title: 'district', content: district?.toString() ?? 'N/A'),
+        ItemWidget(title: 'type', content: type),
+        _buildOpeningHoursColumn(openingHours),
+      ],
+    );
+  }
+
+  Widget _buildPhoneColumn(List<dynamic> phoneList) {
+    if (phoneList.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      children: phoneList
+          .map((phone) =>
+              ItemWidget(title: 'telephone', content: phone.toString()))
+          .toList(),
+    );
+  }
+
+  Widget _buildOpeningHoursColumn(List<dynamic> openingHours) {
+    if (openingHours.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      children: [
+        const Text('opening hours'),
+        ...openingHours
+            .map((hour) => ItemWidget(
+                title: hour['day_of_week'].toString(),
+                content: '${hour['opens']} - ${hour['closes']}'))
+            .toList(),
+      ],
+    );
+  }
+
+  Widget _buildPaginator() {
+    final filteredData = medicalController.getFiltered(
+      cityDistrictsController.rxSelected,
+      medicalController.rxSelected,
+    );
+
+    final totalPages = _calculateTotalPages(filteredData.model);
+
+    return Card(
+      margin: EdgeInsets.zero,
+      elevation: 4,
+      child: NumberPaginator(
+        key: _paginatorKey,
+        initialPage: _currentPage,
+        numberPages: totalPages,
+
+        onPageChange: (int index) {
+          final totalPages = _calculateTotalPages(filteredData.model);
+          if (index >= 0 && index < totalPages) {
+            setState(() => _currentPage = index);
+          }
+        },
+
+        // onPageChange: (index) => setState(() => _currentPage = index),
+      ),
+    );
+  }
+
+  void _navigateToMedicalMap(GeoJSONFeature feature) {
+    Navigator.pushNamed(context, '/MedicalMapForm', arguments: feature);
+  }
+
+  void _resetPaginator() {
+    setState(() {
+      _currentPage = 0; // Сбрасываем на первую страницу
+      _paginatorKey = UniqueKey(); // Пересоздаём ключ пагинатора
+    });
+  }
+
+  List<GeoJSONFeature> _getPaginatedFeatures(
+      GeoJSONFeatureCollection collection) {
+    if (collection.features.isEmpty) {
+      return [];
+    }
+
+    final allFeatures =
+        collection.features.whereType<GeoJSONFeature>().toList();
+    final start = _currentPage * MedicalCrud.page_size;
+
+    // Если start выходит за пределы списка, возвращаем пустой список
+    if (start >= allFeatures.length) {
+      return [];
+    }
+
+    var end = start + MedicalCrud.page_size;
+    end = end.clamp(
+        0, allFeatures.length); // Гарантируем, что end в пределах списка
+
+    // Дополнительная проверка на случай, если clamp не сработал как ожидалось
+    if (start >= end) {
+      return [];
+    }
+
+    return allFeatures.sublist(start, end);
+  }
+
+  int _calculateTotalPages(GeoJSONFeatureCollection? collection) {
+    if (collection == null || collection.features.isEmpty) {
+      return 1; // Минимум 1 страница даже для пустой коллекции
+    }
+    return (collection.features.length / MedicalCrud.page_size)
+        .ceil()
+        .clamp(1, 100);
   }
 }

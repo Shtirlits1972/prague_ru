@@ -119,16 +119,24 @@ class _DistrictFilterFormState extends State<DistrictFilterForm> {
                             ),
                             onPressed: () {
                               setState(() {
-//==//==//==//=================================================
-                                print(setDistrictsSelectedSlug.length);
-
                                 citydistrictsGetX.setCityDistrictsSelected(
                                     setDistrictsSelectedSlug);
-                                int h = 0;
-                                Navigator.pop(context);
-//==//==//==//=================================================
+                                Navigator.pop(
+                                    context, true); // Возвращаем результат
                               });
                             },
+//                             onPressed: () {
+//                               setState(() {
+// //==//==//==//=================================================
+//                                 print(setDistrictsSelectedSlug.length);
+
+//                                 citydistrictsGetX.setCityDistrictsSelected(
+//                                     setDistrictsSelectedSlug);
+//                                 int h = 0;
+//                                 Navigator.pop(context);
+// //==//==//==//=================================================
+//                               });
+//                             },
                             child: Text('OK'),
                           ),
                         ),
