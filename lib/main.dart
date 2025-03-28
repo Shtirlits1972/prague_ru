@@ -5,6 +5,8 @@ import 'package:prague_ru/app_router.dart';
 import 'package:prague_ru/controllers/city_district_controller.dart';
 import 'package:prague_ru/controllers/language_controller.dart';
 import 'package:prague_ru/controllers/medical_controller.dart';
+import 'package:prague_ru/controllers/municipal_authorities_controller.dart';
+import 'package:prague_ru/controllers/police_controller.dart';
 import 'package:prague_ru/form/home_page.dart';
 import 'package:prague_ru/form/setting_form.dart';
 import 'package:prague_ru/localization/localization.dart';
@@ -37,8 +39,10 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    Get.put(MedicalController());
     Get.put(CityDistrictsController());
+    Get.put(MedicalController());
+    Get.put(PoliceController());
+    Get.put(MunicipalAuthritiesController());
 
     _localization.init(
       mapLocales: [

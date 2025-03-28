@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
+import 'package:prague_ru/form/municipal_authority_form.dart';
 import 'package:prague_ru/form/police_form.dart';
 import 'package:prague_ru/localization/localization.dart';
 
@@ -23,6 +24,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
             ),
             child: Text(AppLocale.menu.getString(context)),
           ),
+
           ListTile(
             title: Text(AppLocale.praga_district.getString(context)),
             onTap: () {
@@ -35,6 +37,18 @@ class _DrawerMenuState extends State<DrawerMenu> {
             thickness: 1,
           ),
 
+          ListTile(
+            title: Text(AppLocale.municipai_authority.getString(context)),
+            onTap: () {
+              Navigator.pushNamed(context, MunicipalAuthorityForm.route);
+            },
+          ),
+
+          const Divider(
+            color: Colors.grey,
+            thickness: 1,
+          ),
+//
           //MedicalForm
           ListTile(
             title: Text(AppLocale.medical_institurions.getString(context)),

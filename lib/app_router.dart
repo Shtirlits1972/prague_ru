@@ -8,6 +8,8 @@ import 'package:prague_ru/form/home_page.dart';
 import 'package:prague_ru/form/medical_form.dart';
 import 'package:prague_ru/form/medical_map_form.dart';
 import 'package:prague_ru/form/medical_type_form.dart';
+import 'package:prague_ru/form/municipal_authority_form.dart';
+import 'package:prague_ru/form/municipal_authority_map.dart';
 import 'package:prague_ru/form/police_form.dart';
 import 'package:prague_ru/form/police_map.dart';
 import 'package:prague_ru/form/setting_form.dart';
@@ -62,6 +64,18 @@ class AppRouter {
             routeSettings.arguments as GeoJSONFeature;
         return MaterialPageRoute(
           builder: (_) => PoliceMap(feature: feature),
+        );
+
+      case MunicipalAuthorityForm.route:
+        return MaterialPageRoute(
+          builder: (context) => MunicipalAuthorityForm(),
+        );
+
+      case MunicipaiAuthorityMap.route:
+        final GeoJSONFeature feature =
+            routeSettings.arguments as GeoJSONFeature;
+        return MaterialPageRoute(
+          builder: (_) => MunicipaiAuthorityMap(feature: feature),
         );
 
       default:

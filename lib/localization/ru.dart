@@ -15,7 +15,9 @@ const Map<String, dynamic> ru = {
   AppLocale.all: 'все',
   AppLocale.police_stations: 'Полицейские участки',
   AppLocale.no_data: 'нет данных ',
-  AppLocale.try_change_filters: 'попробуйте изменить фильтры'
+  AppLocale.try_change_filters: 'попробуйте изменить фильтры',
+  AppLocale.municipai_authority: 'Муниципальные органы власти',
+  AppLocale.official_website: 'официальный сайт'
 };
 
 // const Map<String, String> ru = {

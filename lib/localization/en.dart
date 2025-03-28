@@ -13,5 +13,7 @@ const Map<String, dynamic> en = {
   AppLocale.districts: 'districts',
   AppLocale.medical_types: 'type medical institutions',
   AppLocale.all: 'all',
-  AppLocale.police_stations: 'Police stations'
+  AppLocale.police_stations: 'Police stations',
+  AppLocale.municipai_authority: 'Municipal Authorities',
+  AppLocale.official_website: 'official website'
 };

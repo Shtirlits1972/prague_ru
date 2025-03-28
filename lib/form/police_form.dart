@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:geojson_vi/geojson_vi.dart';
@@ -25,7 +24,7 @@ class PoliceForm extends StatefulWidget {
 }
 
 class _PoliceFormState extends State<PoliceForm> {
-  final PoliceController policeGetX = Get.put(PoliceController());
+  final PoliceController policeGetX = Get.find<PoliceController>();
   @override
   Widget build(BuildContext context) {
     Widget central = Center(

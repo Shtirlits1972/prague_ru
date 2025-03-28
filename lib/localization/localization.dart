@@ -23,8 +23,12 @@ mixin AppLocale {
   static const String all = 'all';
   static const String police_stations = 'Police stations';
 
-  static const String no_data = 'no data ';
+  static const String no_data = 'no data';
   static const String try_change_filters = 'try change filters';
+
+  static const String municipai_authority = 'Municipal Authorities';
+  //  official website
+  static const String official_website = 'official website';
 
   static const Map<String, dynamic> EN = en;
   static const Map<String, dynamic> RU = ru;

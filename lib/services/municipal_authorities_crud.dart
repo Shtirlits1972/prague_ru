@@ -6,7 +6,7 @@ import 'dart:async';
 
 import 'package:prague_ru/dto_classes/req_res.dart';
 
-class PoliceCrud {
+class MunicipalAuthoritiesCrud {
   static Future<ReqRes<GeoJSONFeatureCollection>> getData() async {
     ReqRes<GeoJSONFeatureCollection> result =
         ReqRes<GeoJSONFeatureCollection>.empty();
@@ -17,8 +17,7 @@ class PoliceCrud {
         'X-Access-Token': x_token
       };
 
-      var response = await http.get(
-          Uri.https(host, '/v2/municipalpolicestations'),
+      var response = await http.get(Uri.https(host, '/v2/municipalauthorities'),
           headers: headers);
 
       result.status = response.statusCode;

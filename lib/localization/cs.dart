@@ -15,17 +15,7 @@ const Map<String, dynamic> cs = {
   AppLocale.all: 'všechny',
   AppLocale.police_stations: 'Policejní stanice',
   AppLocale.no_data: 'žádné údaje',
-  AppLocale.try_change_filters: 'zkuste vyměnit filtry'
+  AppLocale.try_change_filters: 'zkuste vyměnit filtry',
+  AppLocale.municipai_authority: 'Municipal Authorities',
+  AppLocale.official_website: 'oficiální webové stránky'
 };
-
-  
-
-
-
-//  
-// const Map<String, String> cs = {
-//   'home_title': 'Domů',
-//   'settings_title': 'Nastavení',
-//   'go_to_settings': 'Přejít do nastavení',
-//   'dark_theme': 'Tmavý režim',
-// };

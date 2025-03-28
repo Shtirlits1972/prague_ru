@@ -21,6 +21,7 @@ dependencies:
   number_paginator: ^0.4.3
   # translator: ^1.0.3+1
   google_cloud_translation: ^0.0.4
+  url_launcher: ^6.3.1
 
 dev_dependencies:
   flutter_launcher_icons: "^0.13.1"
