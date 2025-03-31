@@ -46,7 +46,7 @@ class MunicipalAuthritiesController extends GetxController {
     return district != null && districts.contains(district);
   }
 
-  final int itemsPerPage = 50;
+  final int itemsPerPage = 10;
   var currentPage = 0.obs;
 
   List<GeoJSONFeature?> getPaginatedData(GeoJSONFeatureCollection data) {

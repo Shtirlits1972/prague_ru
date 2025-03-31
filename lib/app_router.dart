@@ -13,6 +13,7 @@ import 'package:prague_ru/form/municipal_authority_map.dart';
 import 'package:prague_ru/form/police_form.dart';
 import 'package:prague_ru/form/police_map.dart';
 import 'package:prague_ru/form/setting_form.dart';
+import 'package:prague_ru/form/web_google_map_form.dart';
 
 class AppRouter {
   Route onGenerateRoute(RouteSettings routeSettings) {
@@ -76,6 +77,17 @@ class AppRouter {
             routeSettings.arguments as GeoJSONFeature;
         return MaterialPageRoute(
           builder: (_) => MunicipaiAuthorityMap(feature: feature),
+        );
+
+      case WebMapForm.route:
+        final args = routeSettings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+          builder: (_) => WebMapForm(
+            key: args['key'] as ValueKey,
+            feature: args['feature'] as GeoJSONFeature,
+            title: args['title'] as String,
+            address: args['address'] as String,
+          ),
         );
 
       default:

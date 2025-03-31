@@ -1,24 +1,32 @@
+import 'dart:convert';
 import 'dart:math';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:geojson_vi/geojson_vi.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:number_paginator/number_paginator.dart';
+import 'package:prague_ru/constants.dart';
 import 'package:prague_ru/controllers/city_district_controller.dart';
 import 'package:prague_ru/controllers/municipal_authorities_controller.dart';
-import 'package:prague_ru/controllers/police_controller.dart';
+
 import 'package:prague_ru/dto_classes/req_res.dart';
 import 'package:prague_ru/form/municipal_authority_map.dart';
-import 'package:prague_ru/form/police_map.dart';
 import 'package:prague_ru/form/setting_form.dart';
+import 'package:prague_ru/form/web_google_map_form.dart';
 import 'package:prague_ru/localization/localization.dart';
 import 'package:prague_ru/services/municipal_authorities_crud.dart';
-import 'package:prague_ru/services/police_crud.dart';
+
 import 'package:prague_ru/widget/alert.dart';
+import 'package:prague_ru/widget/build_image_view.dart';
 import 'package:prague_ru/widget/drawer.dart';
 import 'package:prague_ru/form/district_filter_form.dart';
 import 'package:prague_ru/widget/item_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:image_network/image_network.dart';
+import 'dart:math';
 
 class MunicipalAuthorityForm extends StatefulWidget {
   const MunicipalAuthorityForm({Key? key}) : super(key: key);
@@ -149,17 +157,37 @@ class _MunicipalAuthorityFormState extends State<MunicipalAuthorityForm> {
                       '${index + 1 + (municipalController.currentPage.value * municipalController.itemsPerPage)}'),
                 ),
                 title: InkWell(
-                  child: Text(item.properties!['name']),
-                  onTap: () => Navigator.pushNamed(
-                    context,
-                    MunicipaiAuthorityMap.route,
-                    arguments: item,
-                  ),
-                ),
+                    child: Text(item.properties!['name']),
+                    onTap: () {
+                      if (kIsWeb) {
+                        try {
+                          final newKey =
+                              ValueKey(DateTime.now().millisecondsSinceEpoch);
+
+                          Navigator.pushNamed(context, WebMapForm.route,
+                              arguments: {
+                                'key': newKey,
+                                'feature': item,
+                                'title': item.properties!['name'],
+                                'address': item.properties!['address']
+                                    ['address_formatted'],
+                              });
+                        } catch (e) {
+                          print(e);
+                          var t = 0;
+                        }
+                      } else {
+                        Navigator.pushNamed(
+                          context,
+                          MunicipaiAuthorityMap.route,
+                          arguments: item,
+                        );
+                      }
+                    }),
                 subtitle:
                     Text(item.properties!['address']['address_formatted']),
                 children: [
-                  Image.network(item.properties!['image']['url']),
+                  buildNetworkImage(context, item.properties!),
                   buildLinkWidget(context, item.properties!['official_board']),
                   _buildPhoneColumn(item.properties!['telephone']),
                   _get_open_hours(item.properties!['opening_hours']),
@@ -177,6 +205,15 @@ class _MunicipalAuthorityFormState extends State<MunicipalAuthorityForm> {
             },
           ),
       ],
+    );
+  }
+
+  void _showError(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(seconds: 2),
+      ),
     );
   }
 
@@ -214,15 +251,6 @@ class _MunicipalAuthorityFormState extends State<MunicipalAuthorityForm> {
           decoration: TextDecoration.underline,
           fontSize: 20,
         ),
-      ),
-    );
-  }
-
-  void _showError(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: const Duration(seconds: 2),
       ),
     );
   }
