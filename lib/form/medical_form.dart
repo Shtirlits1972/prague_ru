@@ -9,10 +9,12 @@ import 'package:prague_ru/dto_classes/req_res.dart';
 import 'package:prague_ru/form/district_filter_form.dart';
 import 'package:prague_ru/form/medical_type_form.dart';
 import 'package:prague_ru/form/setting_form.dart';
+import 'package:prague_ru/form/web_google_map_form.dart';
 import 'package:prague_ru/localization/localization.dart';
 import 'package:prague_ru/services/medical_crud.dart';
 import 'package:prague_ru/widget/drawer.dart';
 import 'package:prague_ru/widget/item_widget.dart';
+import 'package:flutter/foundation.dart';
 
 class MedicalForm extends StatefulWidget {
   const MedicalForm({Key? key}) : super(key: key);
@@ -238,8 +240,26 @@ class _MedicalFormState extends State<MedicalForm> {
     );
   }
 
-  void _navigateToMedicalMap(GeoJSONFeature feature) {
-    Navigator.pushNamed(context, '/MedicalMapForm', arguments: feature);
+  void _navigateToMedicalMap(GeoJSONFeature feature) async {
+    if (kIsWeb) {
+      try {
+        final newKey = ValueKey(DateTime.now().millisecondsSinceEpoch);
+
+        await Navigator.pushNamed(context, WebMapForm.route, arguments: {
+          'key': newKey,
+          'feature': feature,
+          'title': feature.properties!['name'],
+          'address': feature.properties!['address']['street_address'],
+        });
+
+        setState(() {});
+      } catch (e) {
+        print(e);
+        var t = 0;
+      }
+    } else {
+      Navigator.pushNamed(context, '/MedicalMapForm', arguments: feature);
+    }
   }
 
   void _resetPaginator() {

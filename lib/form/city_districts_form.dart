@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get/get.dart';
 import 'package:prague_ru/controllers/city_district_controller.dart';
+import 'package:prague_ru/form/web_google_map_form.dart';
 import 'package:prague_ru/services/citydistricts_crud.dart';
 import 'package:prague_ru/dto_classes/citydistricts.dart';
 import 'package:prague_ru/dto_classes/req_res.dart';
 import 'package:prague_ru/localization/localization.dart';
 import 'package:prague_ru/widget/drawer.dart';
+import 'package:flutter/foundation.dart';
 
 class CityDistrictsForm extends StatelessWidget {
   const CityDistrictsForm({Key? key}) : super(key: key);
@@ -81,12 +83,32 @@ class CityDistrictsForm extends StatelessWidget {
         itemCount: reqRes.model!.length,
         itemBuilder: (context, index) {
           return InkWell(
-            onTap: () {
-              Navigator.pushNamed(
-                context,
-                '/CityDistrictMapForm',
-                arguments: reqRes.model![index],
-              );
+            onTap: () async {
+              if (kIsWeb) {
+                try {
+                  final newKey =
+                      ValueKey(DateTime.now().millisecondsSinceEpoch);
+
+                  await Navigator.pushNamed(context, WebMapForm.route,
+                      arguments: {
+                        'key': newKey,
+                        'feature': reqRes.model![index].feature,
+                        'title': reqRes.model![index].name,
+                        'address': reqRes.model![index]!.slug,
+                      });
+                } catch (e) {
+                  print(e);
+                  var t = 0;
+                }
+              } else {
+                print(reqRes.model![index]);
+                var t = 0;
+                Navigator.pushNamed(
+                  context,
+                  '/CityDistrictMapForm',
+                  arguments: reqRes.model![index],
+                );
+              }
             },
             child: ListTile(
               leading: Padding(

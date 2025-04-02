@@ -4,6 +4,10 @@ import 'package:image_network/image_network.dart';
 Widget buildNetworkImage(BuildContext context, Map<String, dynamic> json) {
   // Проверяем наличие URL
   if (json.containsKey('image') && json['image'].containsKey('url')) {
+    if (json['image']['url'] == null) {
+      return SizedBox.shrink();
+    }
+
     String imageUrl = json['image']['url'];
 
     return ImageNetwork(

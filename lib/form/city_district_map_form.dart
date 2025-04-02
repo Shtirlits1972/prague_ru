@@ -28,13 +28,16 @@ class _CityDistrictMapFormState extends State<CityDistrictMapForm> {
   void initState() {
     super.initState();
 
-    if (widget.cityDistricts.geometry is GeoJSONPolygon) {
+    if (widget.cityDistricts.feature is GeoJSONFeature) {
       // Извлекаем координаты из GeoJSON
-      final polygon = widget.cityDistricts.geometry as GeoJSONPolygon;
+      final polygon = widget.cityDistricts.feature!.geometry as GeoJSONPolygon;
       final coordinates = polygon.coordinates;
 
-      _centerPoint = LatLng(polygon.centroid[1], polygon.centroid[0]);
+      print(coordinates);
 
+      _centerPoint = LatLng(polygon.centroid[1], polygon.centroid[0]);
+      print(_centerPoint);
+      var r = 0;
       // Преобразуем координаты в List<LatLng>
       final List<LatLng> polygonPoints = coordinates[0]
           .map((point) => LatLng(

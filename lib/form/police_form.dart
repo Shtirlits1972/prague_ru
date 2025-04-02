@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:geojson_vi/geojson_vi.dart';
@@ -9,6 +10,7 @@ import 'package:prague_ru/controllers/police_controller.dart';
 import 'package:prague_ru/dto_classes/req_res.dart';
 import 'package:prague_ru/form/police_map.dart';
 import 'package:prague_ru/form/setting_form.dart';
+import 'package:prague_ru/form/web_google_map_form.dart';
 import 'package:prague_ru/localization/localization.dart';
 import 'package:prague_ru/services/police_crud.dart';
 import 'package:prague_ru/widget/drawer.dart';
@@ -140,11 +142,34 @@ class _PoliceFormState extends State<PoliceForm> {
                 ),
                 title: Text(item.properties!['address']['street_address']),
                 subtitle: Text(item.properties!['district']),
-                onTap: () => Navigator.pushNamed(
-                  context,
-                  PoliceMap.route,
-                  arguments: item,
-                ),
+                onTap: () async {
+                  if (kIsWeb) {
+                    try {
+                      final newKey =
+                          ValueKey(DateTime.now().millisecondsSinceEpoch);
+
+                      await Navigator.pushNamed(context, WebMapForm.route,
+                          arguments: {
+                            'key': newKey,
+                            'feature': item,
+                            'title': item.properties!['district'],
+                            'address': item.properties!['address']
+                                ['street_address'],
+                          });
+
+                      setState(() {});
+                    } catch (e) {
+                      print(e);
+                      var t = 0;
+                    }
+                  } else {
+                    Navigator.pushNamed(
+                      context,
+                      PoliceMap.route,
+                      arguments: item,
+                    );
+                  }
+                },
               );
             },
           ),

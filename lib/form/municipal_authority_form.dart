@@ -158,13 +158,13 @@ class _MunicipalAuthorityFormState extends State<MunicipalAuthorityForm> {
                 ),
                 title: InkWell(
                     child: Text(item.properties!['name']),
-                    onTap: () {
+                    onTap: () async {
                       if (kIsWeb) {
                         try {
                           final newKey =
                               ValueKey(DateTime.now().millisecondsSinceEpoch);
 
-                          Navigator.pushNamed(context, WebMapForm.route,
+                          await Navigator.pushNamed(context, WebMapForm.route,
                               arguments: {
                                 'key': newKey,
                                 'feature': item,
@@ -172,6 +172,8 @@ class _MunicipalAuthorityFormState extends State<MunicipalAuthorityForm> {
                                 'address': item.properties!['address']
                                     ['address_formatted'],
                               });
+
+                          setState(() {});
                         } catch (e) {
                           print(e);
                           var t = 0;

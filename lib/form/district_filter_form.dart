@@ -175,7 +175,7 @@ class _DistrictFilterFormState extends State<DistrictFilterForm> {
       setDistrictsSelectedSlug.addAll(citydistrictsGetX.rxSelected);
 
       CityDistricts cityNull =
-          CityDistricts(id: 0, name: 'null', slug: null, geometry: null);
+          CityDistricts(id: 0, name: 'null', slug: null, feature: null);
 
       lstDistr.add(cityNull);
       lstDistr.addAll(citydistrictsGetX.rxDistricts.value.model!);
